@@ -12,3 +12,6 @@ func get_key(character, index):
 	if not character in characters:
 		characters.append(character)
 	return binds[characters.find(character)][index]
+	
+func reset():
+	characters.clear()

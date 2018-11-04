@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 enum {MODE_DEFEND, MODE_ATTACK}
-enum states {NORMAL, PECK, STUNNED}
+enum states {NORMAL, PECK, STUNNED, KICK}
 
 var state = states.NORMAL
 
@@ -16,6 +16,9 @@ var deceleration = 20
 var movespeed = 0.0
 var maxspeed = mode_maxspeeds[mode]
 export var direction = 1
+
+onready var start_pos = position
+onready var start_dir = direction
 
 var velocity = Vector2()
 var gravity = 15  # Subtracted from the vertical velocity every step
@@ -33,7 +36,7 @@ var can_hit_up = false
 var can_hit_down = false
 var enemy_up = null
 var enemy_down = null
-var knockback = Vector2(500, -350)
+var knockback = Vector2(220, -150)
 var h_input = 0
 var stun_direction = 1
 
@@ -48,22 +51,29 @@ func body_event(body, dir, entered):
 	if body != self and filename == body.filename:
 		if dir == 'up':
 			enemy_up = body if entered else null
-		if dir == 'down' and can_hit_down:
+		if dir == 'down':
 			enemy_down = body if entered else null
 			
 func _input(event):
 	if state == states.NORMAL:
 		if event.is_action_pressed(Controllers.get_key(self, Controllers.MODE_SWAP)):
 			set_mode(1 - mode)
-		elif event.is_action_pressed(Controllers.get_key(self, Controllers.BASIC_ATTACK)) and on_ground:
-			state = states.PECK
-			velocity.x = 0
-			h_input = 0
-			asprite.animation = 'peck'
+		elif event.is_action_pressed(Controllers.get_key(self, Controllers.BASIC_ATTACK)):
 			asprite.playing = true
+			if on_ground:
+				state = states.PECK
+				velocity.x = 0
+				h_input = 0
+				asprite.animation = 'peck'
+			else:
+				state = states.KICK
+				asprite.animation = 'kick'
+				
 
 func _physics_process(delta):
 	on_ground = false
+	if position.y > 650:
+		reset()
 	if state == states.NORMAL:
 		_movement_input()
 		_movement()
@@ -75,6 +85,14 @@ func _physics_process(delta):
 		_animate()
 	elif state == states.PECK:
 		_movement()
+		if asprite.frame > 1 and enemy_up != null:
+			hit_enemy(enemy_up)
+			state = states.NORMAL
+	elif state == states.KICK:
+		_movement()
+		if asprite.frame > 1 and enemy_down != null:
+			hit_enemy(enemy_down)
+			state = states.NORMAL
 	
 func _movement_input():
 	h_input = (int(Input.is_action_pressed(Controllers.get_key(self, Controllers.MOVE_RIGHT))) 
@@ -102,7 +120,8 @@ func _movement():
 				movespeed = max(0, movespeed - deceleration)
 		
 	velocity.x = movespeed * (h_input if state != states.STUNNED else stun_direction)
-	velocity.x = clamp(velocity.x, -maxspeed, maxspeed)
+	if state != states.STUNNED:
+		velocity.x = clamp(velocity.x, -maxspeed, maxspeed)
 	velocity.y += gravity
 	
 	move_and_slide(velocity)
@@ -147,10 +166,18 @@ func set_mode(m):
 	
 func anim_finished():
 	if asprite.animation == 'peck':
-		if enemy_up != null:
-			enemy_up.movespeed = knockback.x
-			enemy_up.stun_direction = direction
-			enemy_up.direction = -direction
-			enemy_up.velocity.y = knockback.y
-			enemy_up.state = states.STUNNED
 		state = states.NORMAL
+	elif asprite.animation == 'kick':
+		state = states.NORMAL
+		
+func hit_enemy(enemy):
+	enemy.movespeed = knockback.x
+	enemy.stun_direction = direction
+	enemy.direction = -direction
+	enemy.velocity.y = knockback.y
+	enemy.state = states.STUNNED
+	
+func reset():
+	for x in Controllers.characters:
+		x.position = x.start_pos
+		x.direction = x.start_dir

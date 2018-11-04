@@ -1,17 +1,21 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://characters/Character.gd" type="Script" id=1]
 [ext_resource path="res://characters/bird/jump_temp1.png" type="Texture" id=2]
 [ext_resource path="res://characters/bird/idle_temp.png" type="Texture" id=3]
 [ext_resource path="res://characters/bird/jump_temp2.png" type="Texture" id=4]
-[ext_resource path="res://characters/bird/walk_temp1.png" type="Texture" id=5]
-[ext_resource path="res://characters/bird/walk_temp2.png" type="Texture" id=6]
-[ext_resource path="res://characters/bird/walk_temp3.png" type="Texture" id=7]
-[ext_resource path="res://characters/bird/walk_temp4.png" type="Texture" id=8]
-[ext_resource path="res://characters/bird/temp_peck1.png" type="Texture" id=9]
-[ext_resource path="res://characters/bird/temp_peck2.png" type="Texture" id=10]
-[ext_resource path="res://characters/bird/temp_peck3.png" type="Texture" id=11]
-[ext_resource path="res://characters/bird/temp_peck4.png" type="Texture" id=12]
+[ext_resource path="res://characters/bird/temp_peck1.png" type="Texture" id=5]
+[ext_resource path="res://characters/bird/temp_peck2.png" type="Texture" id=6]
+[ext_resource path="res://characters/bird/temp_peck3.png" type="Texture" id=7]
+[ext_resource path="res://characters/bird/temp_peck4.png" type="Texture" id=8]
+[ext_resource path="res://characters/bird/walk_temp1.png" type="Texture" id=9]
+[ext_resource path="res://characters/bird/walk_temp2.png" type="Texture" id=10]
+[ext_resource path="res://characters/bird/walk_temp3.png" type="Texture" id=11]
+[ext_resource path="res://characters/bird/walk_temp4.png" type="Texture" id=12]
+[ext_resource path="res://characters/bird/temp_kick1.png" type="Texture" id=13]
+[ext_resource path="res://characters/bird/temp_kick2.png" type="Texture" id=14]
+[ext_resource path="res://characters/bird/temp_kick3.png" type="Texture" id=15]
+[ext_resource path="res://characters/bird/temp_kick4.png" type="Texture" id=16]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -33,13 +37,18 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ) ],
 "loop": true,
-"name": "walk",
-"speed": 5.0
+"name": "peck",
+"speed": 10.0
 }, {
 "frames": [ ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ) ],
 "loop": true,
-"name": "peck",
-"speed": 15.0
+"name": "walk",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ) ],
+"loop": true,
+"name": "kick",
+"speed": 10.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
@@ -47,17 +56,17 @@ animations = [ {
 custom_solver_bias = 0.0
 extents = Vector2( 16, 18 )
 
-[sub_resource type="RectangleShape2D" id=4]
-
-custom_solver_bias = 0.0
-extents = Vector2( 12, 9 )
-
 [sub_resource type="RectangleShape2D" id=3]
 
 custom_solver_bias = 0.0
-extents = Vector2( 9, 9 )
+extents = Vector2( 14.6802, 9.07645 )
 
-[node name="Bird" type="KinematicBody2D" index="0"]
+[sub_resource type="RectangleShape2D" id=4]
+
+custom_solver_bias = 0.0
+extents = Vector2( 21.7225, 8.78946 )
+
+[node name="Bird" type="KinematicBody2D"]
 
 input_pickable = false
 collision_layer = 0
@@ -82,7 +91,7 @@ shape = SubResource( 2 )
 
 [node name="AttackUp" type="Area2D" parent="." index="2"]
 
-position = Vector2( 22, -9 )
+position = Vector2( 15, -9 )
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -95,15 +104,14 @@ _sections_unfolded = [ "Collision", "Transform" ]
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackUp" index="0"]
 
 self_modulate = Color( 1, 0.984375, 0, 1 )
-position = Vector2( -6, 0 )
 rotation = -3.14159
 scale = Vector2( 1, -1 )
-shape = SubResource( 4 )
+shape = SubResource( 3 )
 _sections_unfolded = [ "Transform", "Visibility" ]
 
 [node name="AttackDown" type="Area2D" parent="." index="3"]
 
-position = Vector2( 25, 9 )
+position = Vector2( 5, 10 )
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -116,8 +124,7 @@ _sections_unfolded = [ "Collision", "Transform" ]
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackDown" index="0"]
 
 modulate = Color( 0.278418, 0.0230713, 0.984375, 1 )
-position = Vector2( 0, 9 )
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 _sections_unfolded = [ "Transform" ]
 
 
