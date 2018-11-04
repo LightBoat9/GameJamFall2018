@@ -2,12 +2,12 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/temp.png-8dec8d1dd4064c85cec13b97aa324367.stex"
+path="res://.import/temp_peck4.png-a97ff4f5106bbb7db649504b3038e1c2.stex"
 
 [deps]
 
-source_file="res://characters/bird/temp.png"
-dest_files=[ "res://.import/temp.png-8dec8d1dd4064c85cec13b97aa324367.stex" ]
+source_file="res://characters/bird/temp_peck4.png"
+dest_files=[ "res://.import/temp_peck4.png-a97ff4f5106bbb7db649504b3038e1c2.stex" ]
 
 [params]
 
